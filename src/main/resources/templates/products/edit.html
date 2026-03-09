@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa sản phẩm | Premium Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --sakura-light: #ffebee;           /* Nền nhẹ hơn, không quá trắng */
+        --sakura-primary: #f06292;         /* Hồng đậm hơn, nổi bật */
+        --sakura-gradient: linear-gradient(135deg, #f48fb1 0%, #f06292 50%, #ec407a 100%);
+        --sakura-soft: #fce4ec;
+        --sakura-accent: #f8bbd0;
+        --text-dark: #3e1e2f;              /* Text đậm hơn, dễ đọc */
+        --text-muted: #5c3f4f;
+        --card-bg: rgba(255, 235, 238, 0.94);  /* Card tối hơn một chút */
+        --shadow-soft: 0 10px 35px rgba(236, 64, 122, 0.22);
+        --border-color: #ec407a;           /* Border đậm, dễ nhìn */
+    }
+
+    body {
+        background: linear-gradient(180deg, #ffebee 0%, #f8d7e3 100%);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: var(--text-dark);
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+
+    .glass-card {
+        max-width: 620px;
+        margin: auto;
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        border: 2px solid var(--border-color);  /* Border đậm hơn */
+        box-shadow: var(--shadow-soft);
+        padding: 45px 40px;
+    }
+
+    .page-title {
+        font-weight: 800;
+        background: var(--sakura-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 35px;
+        font-size: 2.4rem;
+        text-align: center;
+        letter-spacing: -0.5px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #4a2535;
+        margin-bottom: 10px;
+        font-size: 1.05rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 14px;
+        padding: 13px 16px;
+        border: 1.5px solid #f48fb1;          /* Border input đậm hơn */
+        background: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease;
+        color: var(--text-dark);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--sakura-primary);
+        box-shadow: 0 0 0 4px rgba(240, 98, 146, 0.25);
+        background: white;
+    }
+
+    .btn-premium {
+        background: var(--sakura-gradient);
+        border: none;
+        color: white;
+        padding: 14px 30px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.35s ease;
+        width: 100%;
+        margin-top: 25px;
+        box-shadow: 0 6px 20px rgba(236, 64, 122, 0.35);
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(236, 64, 122, 0.5);
+        opacity: 0.97;
+    }
+
+    .current-img-box {  /* Chỉ có ở edit.html */
+        background: rgba(255, 235, 238, 0.7);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        margin: 12px 0 8px;
+        border: 1.5px dashed var(--border-color);
+    }
+
+    .current-img {
+        max-width: 140px;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(236, 64, 122, 0.3);
+        transition: transform 0.4s ease;
+    }
+
+    .current-img:hover {
+        transform: scale(1.06);
+    }
+
+    .error {
+        color: #c2185b;
+        font-size: 0.9rem;
+        margin-top: 6px;
+        font-weight: 500;
+    }
+
+    a.btn-link {
+        color: var(--text-muted);
+        transition: color 0.3s;
+    }
+
+    a.btn-link:hover {
+        color: var(--sakura-primary);
+    }
+</style>
+</head>
+
+<body>
+    <main class="main-container py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7">
+
+                    <div class="glass-card">
+                        <header class="text-center mb-5">
+                            <h1 class="page-title mb-0">Sửa Sản Phẩm</h1>
+                            <p class="text-muted mt-2">Cập nhật thông tin sản phẩm #<span th:text="${product.id}"></span></p>
+                        </header>
+
+                        <form th:action="@{/products/edit/{id}(id=${product.id})}" th:object="${product}" method="post" enctype="multipart/form-data">
+                            <!-- Giống phần form của add.html, chỉ khác action và có phần ảnh hiện tại -->
+
+                            <fieldset>
+                                <!-- các field name, price, category giống add.html -->
+
+                                <div class="mb-4">
+                                    <label class="form-label">Thay đổi hình ảnh (nếu cần)</label>
+                                    <input type="file" name="imageFile" class="form-control" accept="image/*">
+
+                                    <div th:if="${product.image}" class="mt-4">
+                                        <label class="form-label d-block">Ảnh hiện tại</label>
+                                        <figure class="current-img-box text-center">
+                                            <img th:src="@{'/images/' + ${product.image}}" class="current-img img-fluid" alt="Ảnh sản phẩm hiện tại">
+                                            <figcaption class="text-muted small mt-2">Ảnh đang sử dụng</figcaption>
+                                        </figure>
+                                    </div>
+
+                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+                                </div>
+                            </fieldset>
+
+                            <div class="d-grid gap-3 mt-5">
+                                <button type="submit" class="btn btn-premium">Cập nhật thay đổi</button>
+                                <a th:href="@{/products}" class="btn btn-link text-decoration-none text-muted text-center">Hủy bỏ</a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
